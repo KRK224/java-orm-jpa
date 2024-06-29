@@ -16,23 +16,10 @@ public class JpaMain {
 
         try {//code
 
-            // 비영속
-//            Member member = new Member();
-//            member.setId(101L);
-//            member.setName("Hello101");
-//
-//            System.out.println("===Before===");
-            // 영속
-//            em.persist(member);
-//            System.out.println("===After===");
+            Member member = em.find(Member.class, 150L);
+            member.setName("Z");
 
-            Member member101 = em.find(Member.class, 101L);
-            Member member101_sec = em.find(Member.class, 101L);
-
-            System.out.println("member101.id = " + member101.getId());
-            System.out.println("member101.getName() = " + member101.getName());
-            System.out.println("member101 == member101_sec ? " + (member101==member101_sec) );
-
+            System.out.println("===============");
 
             tx.commit();
         } catch (Exception e) {
