@@ -16,31 +16,22 @@ public class JpaMain {
 
         try {//code
 
+            // 비영속
 //            Member member = new Member();
-//            member.setId(2L);
-//            member.setName("HelloB");
+//            member.setId(101L);
+//            member.setName("Hello101");
+//
+//            System.out.println("===Before===");
+            // 영속
 //            em.persist(member);
+//            System.out.println("===After===");
 
-//            Member findMember = em.find(Member.class, 2L);
-//            System.out.println("findMember.getName() = " + findMember.getName());
-//            System.out.println("findMember.getId() = " + findMember.getId());
+            Member member101 = em.find(Member.class, 101L);
+            Member member101_sec = em.find(Member.class, 101L);
 
-//            findMember.setName("HelloJPA");
-            // em.persist(findMember); : 마치 자바 collection 객체를 설계한 것 처럼 참조값이 변형된다... ㄷㄷ
-
-            List<Member> findMembers = em.createQuery("select m from Member as m", Member.class)
-                    .setFirstResult(0)
-                    .setMaxResults(2)
-                    .getResultList();
-            for (Member findMember : findMembers) {
-                System.out.println("findMember = " + findMember);
-                System.out.println("findMember.getName() = " + findMember.getName());
-            }
-
-            Member firstMember = em.find(Member.class, 1L);
-            // 과연 하나의 객체로 반환할 것인가? (성공)
-            System.out.println("firstMember = " + firstMember);
-            System.out.println("firstMember.getName() = " + firstMember.getName());
+            System.out.println("member101.id = " + member101.getId());
+            System.out.println("member101.getName() = " + member101.getName());
+            System.out.println("member101 == member101_sec ? " + (member101==member101_sec) );
 
 
             tx.commit();
