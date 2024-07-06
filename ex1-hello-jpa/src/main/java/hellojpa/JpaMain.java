@@ -16,9 +16,14 @@ public class JpaMain {
 
         try {//code
 
-            Member member = em.find(Member.class, 150L);
-            member.setName("Z");
+//            Member findMember = em.find(Member.class, 150L);
+//            findMember.setName("AAAA");
+//
+//            em.clear();
+//
+//            Member member2 = em.find(Member.class, 150L);
 
+            
             System.out.println("===============");
 
             tx.commit();
