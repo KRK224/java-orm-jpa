@@ -16,14 +16,15 @@ public class JpaMain {
 
         try {//code
 
-//            Member findMember = em.find(Member.class, 150L);
-//            findMember.setName("AAAA");
-//
-//            em.clear();
-//
-//            Member member2 = em.find(Member.class, 150L);
-
-            
+            Member member = new Member();
+            member.setUsername("userB");
+            member.setRoleType(RoleType.ADMIN);
+            member.setAge(32);
+            System.out.println("===============");
+            // strategy가 Identity면 id를 알 수 없기 때문에 바로 호출된다.
+            // 반면에, strategy가 sequence인 경우, DB에서 next val 만 호출하여 메모리에 적재한 후 사용.
+            em.persist(member);
+            System.out.println("member.id() = " + member.getId());
             System.out.println("===============");
 
             tx.commit();
