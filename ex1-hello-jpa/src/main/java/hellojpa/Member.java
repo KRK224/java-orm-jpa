@@ -43,9 +43,12 @@ public class Member {
     @Column(name = "name", nullable = false)
     private String username;
 
-    @ManyToOne
-    @JoinColumn(name="TEAM_ID")
-    private Team team;
+    /**
+     * 현재 일대다 단방향
+     */
+//    @ManyToOne
+//    @JoinColumn(name="TEAM_ID")
+//    private Team team;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;

@@ -16,15 +16,15 @@ public class JpaMain {
 
         try {//code
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
-
             Member member = new Member();
             member.setUsername("UserB");
-            member.setTeam(team);
-
             em.persist(member);
+
+            Team team = new Team();
+            team.setName("teamA");
+            // 현재 연관관계 주인은 Team이지만 fk가 없기 때문에 Member table을 update 치는 것을 확인할 수 있다.
+            team.getMembers().add(member);
+            em.persist(team);
 
             tx.commit();
         } catch (Exception e) {
