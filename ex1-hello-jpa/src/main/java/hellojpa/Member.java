@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.TableGenerator;
@@ -49,6 +50,10 @@ public class Member {
     @ManyToOne
     @JoinColumn(name="TEAM_ID", updatable = false, insertable = false)
     private Team team;
+
+    @OneToOne
+    @JoinColumn(name="LOCKER_ID")
+    private Locker locker;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
