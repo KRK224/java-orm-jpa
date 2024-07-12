@@ -16,16 +16,18 @@ public class JpaMain {
 
         try {//code
 
-            Member member = new Member();
-            member.setUsername("userB");
-            member.setRoleType(RoleType.ADMIN);
-            member.setAge(32);
-            System.out.println("===============");
-            // strategy가 Identity면 id를 알 수 없기 때문에 바로 호출된다.
-            // 반면에, strategy가 sequence인 경우, DB에서 next val 만 호출하여 메모리에 적재한 후 사용.
-            em.persist(member);
-            System.out.println("member.id() = " + member.getId());
-            System.out.println("===============");
+            Movie movie = new Movie();
+            movie.setDirector("conan");
+            movie.setActor("julia");
+            movie.setName("Late night with devil");
+            movie.setPrice(10000);
+            em.persist(movie);
+
+            em.flush();
+            em.clear();
+
+            Movie findMovie = em.find(Movie.class, movie.getId());
+            System.out.println("findMovie = " + findMovie);
 
             tx.commit();
         } catch (Exception e) {

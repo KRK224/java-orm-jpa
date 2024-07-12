@@ -7,7 +7,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.TableGenerator;
@@ -17,7 +23,9 @@ import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,7 +48,20 @@ public class Member {
     private Long id;
     @Column(name = "name", nullable = false)
     private String username;
-    private Integer age;
+
+    /**
+     * 일대다 양방향: 외래키를 매핑은 해주지만 인서트, 업데이트를 false로 설정 => 읽기 전용으로 설정
+     */
+    @ManyToOne
+    @JoinColumn(name="TEAM_ID", updatable = false, insertable = false)
+    private Team team;
+
+    @OneToOne
+    @JoinColumn(name="LOCKER_ID")
+    private Locker locker;
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberProduct> memberProducts = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
