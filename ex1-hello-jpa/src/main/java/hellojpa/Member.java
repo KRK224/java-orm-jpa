@@ -44,11 +44,11 @@ public class Member {
     private String username;
 
     /**
-     * 현재 일대다 단방향
+     * 일대다 양방향: 외래키를 매핑은 해주지만 인서트, 업데이트를 false로 설정 => 읽기 전용으로 설정
      */
-//    @ManyToOne
-//    @JoinColumn(name="TEAM_ID")
-//    private Team team;
+    @ManyToOne
+    @JoinColumn(name="TEAM_ID", updatable = false, insertable = false)
+    private Team team;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
