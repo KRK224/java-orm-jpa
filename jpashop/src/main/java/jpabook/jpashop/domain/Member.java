@@ -27,6 +27,6 @@ public class Member {
     private List<Order> orders = new ArrayList<>();
 
     private String city;
-    private String streeet;
+    private String street;
     private String zipcode;
 }
