@@ -16,15 +16,18 @@ public class JpaMain {
 
         try {//code
 
-            Member member = new Member();
-            member.setUsername("UserB");
-            em.persist(member);
+            Movie movie = new Movie();
+            movie.setDirector("conan");
+            movie.setActor("julia");
+            movie.setName("Late night with devil");
+            movie.setPrice(10000);
+            em.persist(movie);
 
-            Team team = new Team();
-            team.setName("teamA");
-            // 현재 연관관계 주인은 Team이지만 fk가 없기 때문에 Member table을 update 치는 것을 확인할 수 있다.
-            team.getMembers().add(member);
-            em.persist(team);
+            em.flush();
+            em.clear();
+
+            Movie findMovie = em.find(Movie.class, movie.getId());
+            System.out.println("findMovie = " + findMovie);
 
             tx.commit();
         } catch (Exception e) {
