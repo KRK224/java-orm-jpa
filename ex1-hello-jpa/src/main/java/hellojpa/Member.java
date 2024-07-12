@@ -7,7 +7,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.TableGenerator;
@@ -40,7 +42,10 @@ public class Member {
     private Long id;
     @Column(name = "name", nullable = false)
     private String username;
-    private Integer age;
+
+    @ManyToOne
+    @JoinColumn(name="TEAM_ID")
+    private Team team;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
