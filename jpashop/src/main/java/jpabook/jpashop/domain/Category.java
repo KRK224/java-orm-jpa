@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Category {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue
@@ -21,10 +21,10 @@ public class Category {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "PARENT_ID")
+    @JoinColumn(name = "PARENT_ID") // self 참조의 주인
     private Category parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent") // self 참조의 읽기 전용
     private List<Category> child = new ArrayList<>();
 
     @ManyToMany

@@ -17,7 +17,7 @@ import java.util.List;
         sequenceName = "TEAM_SEQ",
         allocationSize = 50, initialValue = 1
 )
-public class Team {
+public class Team extends BaseEntity {
 
     @Id @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="TEAM_SEQ_GENERATOR")
     @Column(name = "TEAM_ID")
@@ -25,7 +25,7 @@ public class Team {
     private String name;
 
     @OneToMany()
-    @JoinColumn(name="TEAM_ID")
+    @JoinColumn(name="TEAM_ID") // 일대다 관계. 테이블에서는 항상 다가 외래키를 가지고 있다. 그런데 여기서 JoinColumn을 써서 연관관계 주인으로 만듬.
     private List<Member> members = new ArrayList<>();
 
     public Long getId() {
