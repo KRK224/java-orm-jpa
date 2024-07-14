@@ -43,7 +43,7 @@ import lombok.Setter;
         sequenceName = "MEMBER_SEQ",
         initialValue = 1, allocationSize = 50
 )
-public class Member {
+public class Member extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator= "MEMBER_SEQ_GENERATOR")
     private Long id;
     @Column(name = "name", nullable = false)
@@ -66,11 +66,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createDate;
+    // 모든 테이블에 들어가는 속성의 경우 @MappedSuperClass로 받아서 사용할 수 있다.
+//    private String createdBy;
+//    private LocalDateTime createDate;
+//    private String lastModifiedBy;
+//    private LocalDateTime lastModifiedDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModifiedDate;
 
     @Lob
     private String description; // Lob인데 변수 타입이 String이기 때문에 CLOB으로 생성
