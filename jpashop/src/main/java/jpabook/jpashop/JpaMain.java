@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+import jpabook.jpashop.domain.Book;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 
@@ -14,10 +15,12 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try {
-            Order order = new Order();
-            // 양뱡향 매핑인 경우, 연관관계 편의 메소드를 사용할 것
-            order.addOrderItem(new OrderItem());
+            Book book = new Book();
+            book.setName("JPA");
+            book.setAuthor("김영한");
+            book.setPrice(1000);
 
+            em.persist(book);
 
             tx.commit();
         } catch (Exception e) {
