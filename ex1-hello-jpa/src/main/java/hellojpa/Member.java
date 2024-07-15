@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,11 +50,9 @@ public class Member extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String username;
 
-    /**
-     * 일대다 양방향: 외래키를 매핑은 해주지만 인서트, 업데이트를 false로 설정 => 읽기 전용으로 설정
-     */
-    @ManyToOne
-    @JoinColumn(name="TEAM_ID", updatable = false, insertable = false)
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="TEAM_ID")
     private Team team;
 
     @OneToOne
