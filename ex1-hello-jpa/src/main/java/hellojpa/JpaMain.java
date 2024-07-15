@@ -18,29 +18,40 @@ public class JpaMain {
 
         try {//code
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
 
             Member member = new Member();
             member.setUsername("user");
             member.setCreatedBy("Kim");
-            member.setTeam(team);
-
+            member.setTeam(teamA);
             em.persist(member);
+
+            Member member2 = new Member();
+            member2.setUsername("user2");
+            member2.setCreatedBy("Kim");
+            member2.setTeam(teamB);
+
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-            Member findMember = em.find(Member.class, member.getId());
+            // JSQL n+1 문제
+            List<Member> memberList = em.createQuery("select m from Member m", Member.class).getResultList();
 
-            System.out.println("findMember.getTeam().getClass() = " + findMember.getTeam().getClass()); // Proxy 객체임을 확인
-
-            System.out.println("========"); // LAZY면 이때 초기화
-            System.out.println("teamName: " + findMember.getTeam().getName());
-            System.out.println("========");
-
-
+            /**
+             * Select * from member;
+             * EAGER 타입이기 때문에 Team 객체도 필요
+             * Select * from team where team_id = ? // 멤버에 물려있는 데이터가 n개이면 n번 조회
+             * 최초의 1 쿼리로 인해 n번의 추가 쿼리가 발생 : n+1 문제
+             * 이를 방지하기 위해 fetch join과 entity 그래프 사용
+             */
 
 //            boolean loaded = emf.getPersistenceUnitUtil().isLoaded(refMember);
 //            System.out.println("loaded = " + loaded); // false
