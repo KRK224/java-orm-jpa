@@ -18,44 +18,58 @@ public class JpaMain {
 
         try {//code
 
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
             Member member = new Member();
             member.setUsername("user");
             member.setCreatedBy("Kim");
+            member.setTeam(team);
+
             em.persist(member);
 
             em.flush();
             em.clear();
 
-            Member refMember = em.getReference(Member.class, member.getId());
+            Member findMember = em.find(Member.class, member.getId());
 
-            boolean loaded = emf.getPersistenceUnitUtil().isLoaded(refMember);
-            System.out.println("loaded = " + loaded); // false
-            Hibernate.initialize(refMember); // Hibernate에만 존재하는 초기화 메서드
-//            refMember.getUsername(); // 강제 로딩, 모든 JPA에서 사용하는 방법
-            loaded = emf.getPersistenceUnitUtil().isLoaded(refMember);
-            System.out.println("loaded = " + loaded); // true
+            System.out.println("findMember.getTeam().getClass() = " + findMember.getTeam().getClass()); // Proxy 객체임을 확인
 
-            em.clear();
+            System.out.println("========"); // LAZY면 이때 초기화
+            System.out.println("teamName: " + findMember.getTeam().getName());
+            System.out.println("========");
 
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setCreateDate(LocalDateTime.now());
-            member1.setCreatedBy("Kim");
 
-            em.persist(member1);
 
-            em.flush();
-            em.clear();
+//            boolean loaded = emf.getPersistenceUnitUtil().isLoaded(refMember);
+//            System.out.println("loaded = " + loaded); // false
+//            Hibernate.initialize(refMember); // Hibernate에만 존재하는 초기화 메서드
+////            refMember.getUsername(); // 강제 로딩, 모든 JPA에서 사용하는 방법
+//            loaded = emf.getPersistenceUnitUtil().isLoaded(refMember);
+//            System.out.println("loaded = " + loaded); // true
+//
+//            em.clear();
+//
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//            member1.setCreateDate(LocalDateTime.now());
+//            member1.setCreatedBy("Kim");
+//
+//            em.persist(member1);
+//
+//            em.flush();
+//            em.clear();
 
-            Member refMember2 = em.getReference(Member.class, member1.getId());
-            System.out.println("refMember2.getClass() = " + refMember2.getClass());   // Proxy
-
-            em.detach(refMember2); // ?? Proxy 객체를 더 이상 관리하지 않는다. LazyInitializationException: could not initialize proxy
+//            Member refMember2 = em.getReference(Member.class, member1.getId());
+//            System.out.println("refMember2.getClass() = " + refMember2.getClass());   // Proxy
+//
+//            em.detach(refMember2); // ?? Proxy 객체를 더 이상 관리하지 않는다. LazyInitializationException: could not initialize proxy
 //            em.close();
 //            em.clear();
 
             // 실제 DB 쿼리가 발생해서 초기화 진행. => 하지만 더 이상 관리하지 않기 때문에 exception 발생.
-            System.out.println("refMember2.getUsername() = " + refMember2.getUsername());
+//            System.out.println("refMember2.getUsername() = " + refMember2.getUsername());
 
 //            Member member2 = new Member();
 //            member2.setUsername("member2");
