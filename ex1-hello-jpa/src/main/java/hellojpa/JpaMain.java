@@ -18,32 +18,58 @@ public class JpaMain {
 
         try {//code
 
-            Team teamA = new Team();
-            teamA.setName("teamA");
-            em.persist(teamA);
+            Child child1 = new Child();
+            child1.setName("child1");
+            Child child2 = new Child();
+            child2.setName("child2");
 
-            Team teamB = new Team();
-            teamB.setName("teamB");
-            em.persist(teamB);
+            Parent parent = new Parent();
+            parent.setName("parent");
+            parent.addChild(child1);
+            parent.addChild(child2);
 
-            Member member = new Member();
-            member.setUsername("user");
-            member.setCreatedBy("Kim");
-            member.setTeam(teamA);
-            em.persist(member);
-
-            Member member2 = new Member();
-            member2.setUsername("user2");
-            member2.setCreatedBy("Kim");
-            member2.setTeam(teamB);
-
-            em.persist(member2);
+            // 이때 cascade 설정을 하지 않으면 parent만 persist 되고 child는 persist 되지 않는다.
+            // cascade는 부모가 자식의 "단일 소유자"이면서, 라이프 사이틀을 같이 할 때 사용한다.
+            em.persist(parent);
 
             em.flush();
             em.clear();
 
-            // JSQL n+1 문제
-            List<Member> memberList = em.createQuery("select m from Member m", Member.class).getResultList();
+            Parent findParent = em.find(Parent.class, parent.getId());
+            // orphanRemoval = true 설정 시, 부모에서 자식을 제거하면 자식이 삭제된다.
+            // 마찬가지로 부모가 자식의 "단일 소유자" 인 경우 사용한다.
+            findParent.getChildren().remove(0);
+
+            // cascade = CascadeType.REMOVE 설정 시, 부모가 삭제되면 자식도 삭제된다.
+            // orphanRemoval = true도 같은 효과를 가진다.
+            em.remove(findParent);
+
+//            Team teamA = new Team();
+//            teamA.setName("teamA");
+//            em.persist(teamA);
+//
+//            Team teamB = new Team();
+//            teamB.setName("teamB");
+//            em.persist(teamB);
+//
+//            Member member = new Member();
+//            member.setUsername("user");
+//            member.setCreatedBy("Kim");
+//            member.setTeam(teamA);
+//            em.persist(member);
+//
+//            Member member2 = new Member();
+//            member2.setUsername("user2");
+//            member2.setCreatedBy("Kim");
+//            member2.setTeam(teamB);
+//
+//            em.persist(member2);
+//
+//            em.flush();
+//            em.clear();
+//
+//            // JSQL n+1 문제
+//            List<Member> memberList = em.createQuery("select m from Member m", Member.class).getResultList();
 
             /**
              * Select * from member;
