@@ -1,6 +1,9 @@
 package hellojpa;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -64,6 +67,22 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
+
+    // 기간
+    @Embedded
+    private Period workPeriod;
+    // 주소
+    @Embedded
+    private Address homeAddress;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name= "city", column=@Column(name = "WORK_CITY")),
+            @AttributeOverride(name= "street", column=@Column(name= "WORK_STREET")),
+            @AttributeOverride(name= "zipcode", column=@Column(name= "WORK_ZIPCODE"))
+    })
+    private Address workAddress; // 이러면 컬럼 명이 중복이니까, @AttributeOverrides를 사용.
+
 
     // 모든 테이블에 들어가는 속성의 경우 @MappedSuperClass로 받아서 사용할 수 있다.
 //    private String createdBy;

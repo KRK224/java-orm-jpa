@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="963692e1-5293-4c17-858a-edf0cd14a2a6" name="Changes" comment="[연관관계 매핑] 일대일, 다대다 연관관계 매핑 실습" />
+    <list default="true" id="963692e1-5293-4c17-858a-edf0cd14a2a6" name="Changes" comment="[프록시 및 영속성 전이] 실습" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -101,11 +101,20 @@
       <option name="project" value="LOCAL" />
       <updated>1720763795791</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="[프록시 및 영속성 전이] 실습">
+      <option name="closed" value="true" />
+      <created>1721267657618</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1721267657618</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[연관관계 매핑] 일대일, 다대다 연관관계 매핑 실습" />
-    <option name="LAST_COMMIT_MESSAGE" value="[연관관계 매핑] 일대일, 다대다 연관관계 매핑 실습" />
+    <MESSAGE value="[프록시 및 영속성 전이] 실습" />
+    <option name="LAST_COMMIT_MESSAGE" value="[프록시 및 영속성 전이] 실습" />
   </component>
 </project>
