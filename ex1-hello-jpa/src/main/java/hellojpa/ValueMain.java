@@ -19,6 +19,7 @@ public class ValueMain {
 
         System.out.println("refA = " + refA);
         System.out.println("refB = " + refB);
+        System.out.println("refA == refB: " + (refA == refB));
 
     }
 }

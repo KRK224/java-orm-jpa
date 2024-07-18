@@ -20,12 +20,33 @@ public class JpaMain {
             /**
              * 임베디드 타입 코드
              */
+            Address workAddress = new Address("workCity", "workStreet", "workZipcode");
 
             Member member = new Member();
             member.setUsername("mem1");
             member.setHomeAddress(new Address("city", "street", "zipcode"));
             member.setWorkPeriod(new Period(LocalDateTime.of(2019, 12, 22, 1, 13), LocalDateTime.of(2025, 1, 30, 12, 1)));
+            member.setWorkAddress(workAddress);
             em.persist(member);
+
+            Member member2 = new Member();
+            member2.setUsername("mem2");
+//            member2.setWorkAddress(workAddress); // 같은 임베디드 타입을 갖는다...
+            member2.setWorkAddress(new Address(workAddress.getCity(), workAddress.getStreet(), workAddress.getZipcode())); // 그래서 복사한 참조 객체를 넣어주기!
+            member2.setHomeAddress(new Address("city2", "street2", "zipcode2"));
+
+            em.persist(member2);
+
+            // 만약 같은 임베디드 타입을 참조하는 경우, 하나만 변경해도 두 엔티티에 반영되는 사이드 이펙트 발생.
+//            member.getWorkAddress().setCity("workNewCity");
+
+            // 복사해서 임베디드 타입을 넣어주는 걸 까먹으면?
+            // 같은 참조를 넣어주는 것을 자바 언어(컴파일) 상 막을 수 없다 => 불변 객체를 만들자!!!
+            // 만약 변경하고 싶다면 새로 만들어서 넣어주기
+            Address newAddress = workAddress.copyAndNew("newCity", null, null);
+            member.setWorkAddress(newAddress);
+
+            System.out.println("equals() test: " + newAddress.equals(newAddress.copyAndNew(null,null,null)));
 
 
 //            Child child1 = new Child();
