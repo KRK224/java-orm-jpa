@@ -3,6 +3,7 @@ package hellojpa;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Hibernate;
 
 public class JpaMain {
@@ -17,36 +18,93 @@ public class JpaMain {
         tx.begin();
 
         try {//code
+
+            /**
+             * 값 타입 컬렉션
+             */
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(new Address("homeCity", "street", "zipcode"));
+
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
+
+            member.getAddressHistory().add(new AddressEntity("old1", "street", "zipcode"));
+            member.getAddressHistory().add(new AddressEntity("old2", "street", "zipcode"));
+
+            em.persist(member);
+            em.flush();
+            em.clear();
+            System.out.println("=========== Start ===============");
+            // 조회: 지연 로딩
+            Member findMember = em.find(Member.class, member.getId());
+            List<AddressEntity> addressHistory = findMember.getAddressHistory();
+            for (AddressEntity address : addressHistory) {
+                System.out.println("address = " + address);
+            }
+            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+            for (String favoriteFood : favoriteFoods) {
+                System.out.println("favoriteFood = " + favoriteFood);
+            }
+
+            // 수정 - 불변 객체
+            Address homeAddress = findMember.getHomeAddress();
+            // 이때 모든 Address History 테이블의 값이 삭제 되고 다시 넣네 ㅇㅂㅇ?
+            findMember.getAddressHistory().add(new AddressEntity(homeAddress));
+            // 새로 넣어준다.
+            Address newHomeAddress = homeAddress.copyAndNew("newHomeCity", null, null);
+            findMember.setHomeAddress(newHomeAddress);
+
+            // 여기서는 하나만 삭제하고 하나만 잘 넣는다
+            findMember.getFavoriteFoods().remove("치킨");
+            findMember.getFavoriteFoods().add("한식");
+
+            // 근데 여기서는 findMember에 해당하는 모든 임베디드 Address 타입을 지우고 새로 넣는다..?ㅇㅂㅇ
+            // 값 타입은 추적이 불가능 하다. PK가 없기 때문! 그래서 변경점만 업데이트 하는 것이 아닌! 다 지우고 다시 생성
+            // => 값타입 컬렉션 대신 Entity를 활용하자
+            findMember.getAddressHistory().remove(0);
+//            findMember.getAddressHistory().add(new Address("newCity1", "street", "zipcode"));
+            findMember.getAddressHistory().add(new AddressEntity("newCity1", "street", "zipcode"));
+
+            /**
+             * 그럼 언제 값 컬렉션을 사용하나?
+             * 값을 추적할 필요가 없는 정말 단순한 경우 => e.g. 사용자 설렉트 박스로 선택한 값들을 저장할 때, 진짜 그 순간의 선택만 다시 저장하면 됨.
+             * e.g. position.. 값을 추적하지 않는 경우!!!
+             */
+
+
             /**
              * 임베디드 타입 코드
              */
-            Address workAddress = new Address("workCity", "workStreet", "workZipcode");
-
-            Member member = new Member();
-            member.setUsername("mem1");
-            member.setHomeAddress(new Address("city", "street", "zipcode"));
-            member.setWorkPeriod(new Period(LocalDateTime.of(2019, 12, 22, 1, 13), LocalDateTime.of(2025, 1, 30, 12, 1)));
-            member.setWorkAddress(workAddress);
-            em.persist(member);
-
-            Member member2 = new Member();
-            member2.setUsername("mem2");
-//            member2.setWorkAddress(workAddress); // 같은 임베디드 타입을 갖는다...
-            member2.setWorkAddress(new Address(workAddress.getCity(), workAddress.getStreet(), workAddress.getZipcode())); // 그래서 복사한 참조 객체를 넣어주기!
-            member2.setHomeAddress(new Address("city2", "street2", "zipcode2"));
-
-            em.persist(member2);
-
-            // 만약 같은 임베디드 타입을 참조하는 경우, 하나만 변경해도 두 엔티티에 반영되는 사이드 이펙트 발생.
-//            member.getWorkAddress().setCity("workNewCity");
-
-            // 복사해서 임베디드 타입을 넣어주는 걸 까먹으면?
-            // 같은 참조를 넣어주는 것을 자바 언어(컴파일) 상 막을 수 없다 => 불변 객체를 만들자!!!
-            // 만약 변경하고 싶다면 새로 만들어서 넣어주기
-            Address newAddress = workAddress.copyAndNew("newCity", null, null);
-            member.setWorkAddress(newAddress);
-
-            System.out.println("equals() test: " + newAddress.equals(newAddress.copyAndNew(null,null,null)));
+//            Address workAddress = new Address("workCity", "workStreet", "workZipcode");
+//
+//            Member member = new Member();
+//            member.setUsername("mem1");
+//            member.setHomeAddress(new Address("city", "street", "zipcode"));
+//            member.setWorkPeriod(new Period(LocalDateTime.of(2019, 12, 22, 1, 13), LocalDateTime.of(2025, 1, 30, 12, 1)));
+//            member.setWorkAddress(workAddress);
+//            em.persist(member);
+//
+//            Member member2 = new Member();
+//            member2.setUsername("mem2");
+////            member2.setWorkAddress(workAddress); // 같은 임베디드 타입을 갖는다...
+//            member2.setWorkAddress(new Address(workAddress.getCity(), workAddress.getStreet(), workAddress.getZipcode())); // 그래서 복사한 참조 객체를 넣어주기!
+//            member2.setHomeAddress(new Address("city2", "street2", "zipcode2"));
+//
+//            em.persist(member2);
+//
+//            // 만약 같은 임베디드 타입을 참조하는 경우, 하나만 변경해도 두 엔티티에 반영되는 사이드 이펙트 발생.
+////            member.getWorkAddress().setCity("workNewCity");
+//
+//            // 복사해서 임베디드 타입을 넣어주는 걸 까먹으면?
+//            // 같은 참조를 넣어주는 것을 자바 언어(컴파일) 상 막을 수 없다 => 불변 객체를 만들자!!!
+//            // 만약 변경하고 싶다면 새로 만들어서 넣어주기
+//            Address newAddress = workAddress.copyAndNew("newCity", null, null);
+//            member.setWorkAddress(newAddress);
+//
+//            System.out.println("equals() test: " + newAddress.equals(newAddress.copyAndNew(null,null,null)));
 
 
 //            Child child1 = new Child();
