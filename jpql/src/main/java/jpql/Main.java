@@ -23,6 +23,9 @@ public class Main {
             member.setAge(10);
             em.persist(member);
 
+            /**
+             * 기본 쿼리
+             */
             System.out.println("============== 쿼리 시작 ==========");
             // 이때 자동으로 flush 호출
             TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
@@ -56,8 +59,7 @@ public class Main {
             // 반환 타입이 명확하지 않은 경우는 Query.
             Query query3 = em.createQuery("select m.username, m.age from Member m");
 
-
-
+            tx.commit();
         } catch(Exception e) {
             tx.rollback();
             e.printStackTrace();
