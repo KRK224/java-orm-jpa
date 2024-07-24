@@ -58,13 +58,13 @@ public class JoinMain {
                 }
 
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                if(em!=null && em.getTransaction().isActive()) {
+                if (em!=null && em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
                 }
             } finally {
-                if(em!=null)
+                if (em!=null)
                     em.close();
             }
         }

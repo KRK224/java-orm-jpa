@@ -23,50 +23,50 @@ public class JpaMain {
              * 값 타입 컬렉션
              */
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setHomeAddress(new Address("homeCity", "street", "zipcode"));
-
-            member.getFavoriteFoods().add("치킨");
-            member.getFavoriteFoods().add("족발");
-            member.getFavoriteFoods().add("피자");
-
-            member.getAddressHistory().add(new AddressEntity("old1", "street", "zipcode"));
-            member.getAddressHistory().add(new AddressEntity("old2", "street", "zipcode"));
-
-            em.persist(member);
-            em.flush();
-            em.clear();
-            System.out.println("=========== Start ===============");
-            // 조회: 지연 로딩
-            Member findMember = em.find(Member.class, member.getId());
-            List<AddressEntity> addressHistory = findMember.getAddressHistory();
-            for (AddressEntity address : addressHistory) {
-                System.out.println("address = " + address);
-            }
-            Set<String> favoriteFoods = findMember.getFavoriteFoods();
-            for (String favoriteFood : favoriteFoods) {
-                System.out.println("favoriteFood = " + favoriteFood);
-            }
-
-            // 수정 - 불변 객체
-            Address homeAddress = findMember.getHomeAddress();
-            // 이때 모든 Address History 테이블의 값이 삭제 되고 다시 넣네 ㅇㅂㅇ?
-            findMember.getAddressHistory().add(new AddressEntity(homeAddress));
-            // 새로 넣어준다.
-            Address newHomeAddress = homeAddress.copyAndNew("newHomeCity", null, null);
-            findMember.setHomeAddress(newHomeAddress);
-
-            // 여기서는 하나만 삭제하고 하나만 잘 넣는다
-            findMember.getFavoriteFoods().remove("치킨");
-            findMember.getFavoriteFoods().add("한식");
-
-            // 근데 여기서는 findMember에 해당하는 모든 임베디드 Address 타입을 지우고 새로 넣는다..?ㅇㅂㅇ
-            // 값 타입은 추적이 불가능 하다. PK가 없기 때문! 그래서 변경점만 업데이트 하는 것이 아닌! 다 지우고 다시 생성
-            // => 값타입 컬렉션 대신 Entity를 활용하자
-            findMember.getAddressHistory().remove(0);
-//            findMember.getAddressHistory().add(new Address("newCity1", "street", "zipcode"));
-            findMember.getAddressHistory().add(new AddressEntity("newCity1", "street", "zipcode"));
+//            Member member = new Member();
+//            member.setUsername("member1");
+//            member.setHomeAddress(new Address("homeCity", "street", "zipcode"));
+//
+//            member.getFavoriteFoods().add("치킨");
+//            member.getFavoriteFoods().add("족발");
+//            member.getFavoriteFoods().add("피자");
+//
+//            member.getAddressHistory().add(new AddressEntity("old1", "street", "zipcode"));
+//            member.getAddressHistory().add(new AddressEntity("old2", "street", "zipcode"));
+//
+//            em.persist(member);
+//            em.flush();
+//            em.clear();
+//            System.out.println("=========== Start ===============");
+//            // 조회: 지연 로딩
+//            Member findMember = em.find(Member.class, member.getId());
+//            List<AddressEntity> addressHistory = findMember.getAddressHistory();
+//            for (AddressEntity address : addressHistory) {
+//                System.out.println("address = " + address);
+//            }
+//            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+//            for (String favoriteFood : favoriteFoods) {
+//                System.out.println("favoriteFood = " + favoriteFood);
+//            }
+//
+//            // 수정 - 불변 객체
+//            Address homeAddress = findMember.getHomeAddress();
+//            // 이때 모든 Address History 테이블의 값이 삭제 되고 다시 넣네 ㅇㅂㅇ?
+//            findMember.getAddressHistory().add(new AddressEntity(homeAddress));
+//            // 새로 넣어준다.
+//            Address newHomeAddress = homeAddress.copyAndNew("newHomeCity", null, null);
+//            findMember.setHomeAddress(newHomeAddress);
+//
+//            // 여기서는 하나만 삭제하고 하나만 잘 넣는다
+//            findMember.getFavoriteFoods().remove("치킨");
+//            findMember.getFavoriteFoods().add("한식");
+//
+//            // 근데 여기서는 findMember에 해당하는 모든 임베디드 Address 타입을 지우고 새로 넣는다..?ㅇㅂㅇ
+//            // 값 타입은 추적이 불가능 하다. PK가 없기 때문! 그래서 변경점만 업데이트 하는 것이 아닌! 다 지우고 다시 생성
+//            // => 값타입 컬렉션 대신 Entity를 활용하자
+//            findMember.getAddressHistory().remove(0);
+////            findMember.getAddressHistory().add(new Address("newCity1", "street", "zipcode"));
+//            findMember.getAddressHistory().add(new AddressEntity("newCity1", "street", "zipcode"));
 
             /**
              * 그럼 언제 값 컬렉션을 사용하나?
@@ -133,32 +133,37 @@ public class JpaMain {
 //            // orphanRemoval = true도 같은 효과를 가진다.
 //            em.remove(findParent);
 
-//            Team teamA = new Team();
-//            teamA.setName("teamA");
-//            em.persist(teamA);
-//
-//            Team teamB = new Team();
-//            teamB.setName("teamB");
-//            em.persist(teamB);
-//
-//            Member member = new Member();
-//            member.setUsername("user");
-//            member.setCreatedBy("Kim");
-//            member.setTeam(teamA);
-//            em.persist(member);
-//
-//            Member member2 = new Member();
-//            member2.setUsername("user2");
-//            member2.setCreatedBy("Kim");
-//            member2.setTeam(teamB);
-//
-//            em.persist(member2);
-//
-//            em.flush();
-//            em.clear();
-//
-//            // JSQL n+1 문제
-//            List<Member> memberList = em.createQuery("select m from Member m", Member.class).getResultList();
+            /**
+             * N + 1 문제
+             */
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+            Member member = new Member();
+            member.setUsername("user");
+            member.setCreatedBy("Kim");
+            member.setTeam(teamA);
+            em.persist(member);
+
+            Member member2 = new Member();
+            member2.setUsername("user2");
+            member2.setCreatedBy("Kim");
+            member2.setTeam(teamB);
+
+            em.persist(member2);
+
+            em.flush();
+            em.clear();
+
+            // JSQL n+1 문제
+            // 기본적으로 select하는 Entity만 첫 쿼리로 나가는데, ***ToOne인 경우 Default 설정이 EAGER이라, 추가 select 문이 N개 발생하는 것을 알 수 있다.
+            // 그런데 Lazy 로딩 시에도 관계된 엔티티가 반드시 사용 된다면... 반복문에서 동일한 select query N개가 발생 => fetch join으로 해결하자!
+            List<Member> memberList = em.createQuery("select m from Member m", Member.class).getResultList();
 
             /**
              * Select * from member;
