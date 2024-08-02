@@ -68,8 +68,9 @@ public class FetchJoinMain {
                 }
 
                 em.clear();
-                // distinct 해도 아무 소용 없음 -> join한 member의 정보가 다르기 때문
-                // 그런데, fetch join을 사용한 경우, 동일한 엔티티에 대해서의 중복 제거(애플리케이션 차원)
+                // DB join 결과를 생각해보면 멤버 2명이 각각 하나의 로우로 나오고 이를 JPA가 취합을 하는데 2개에 대한 처리를 하기 때문.
+                // SQL 상에서는 distinct 해도 아무 소용 없음 -> join한 member의 정보가 다르기 때문
+                // 그런데, JPQL fetch join을 사용한 경우, 동일한 엔티티에 대해서의 중복 제거를 애플리케이션 차원에서 해준다.
                 String fetchQueryForCollections = "select distinct t from Team t join fetch t.members where t.name = 'teamA'";
                 List<Team> fetchQueryForCollectionsResult = em.createQuery(fetchQueryForCollections, Team.class).getResultList();
                 for (Team team : fetchQueryForCollectionsResult) {
@@ -79,12 +80,24 @@ public class FetchJoinMain {
                     }
                 }
 
+                em.clear();
                 /**
                  * join과 fetch join의 차이는 join의 경우 쿼리문에서 join을 사용하나 영속성 컨텍스트로 데이터를 퍼올리지 않는다...
                  * 따라서 N+1 문제 여전히 존재
                  *
-                 * 패치 조인은 즉시 로딩이며, 객체 그래프를 SQL 한번에 조회하는 개념!!
+                 * 패치 조인은 즉시 로딩처럼 처리되며, 객체 그래프를 SQL 한번에 조회하는 개념!!
                  */
+                String generalJoinQuery = "select t from Team t join t.members m";
+                List<Team> teamListWithPlainJoin = em.createQuery(generalJoinQuery, Team.class).getResultList();
+                for (Team team : teamListWithPlainJoin) {
+                    // 여기까지는 Member id만 가진 Proxy객체를 가지고 있어 size 나옴?
+                    // => 아니네... 뭔가 collection 이라서 다른 거 같은데... Member 객체 자체를 나중에 쿼리를 통해 가지고 옴
+                    System.out.println("team: " + team.getName() + " has member: " + team.getMembers().size());
+                    for (Member member : team.getMembers()) {
+                        // 영속성 컨텍스트에 퍼올려지지 않아서 쿼리가 나감
+                        System.out.println("  --> member = " + member.getUsername());
+                    }
+                }
 
                 tx.commit();
             } catch (Exception e) {
