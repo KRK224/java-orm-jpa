@@ -29,6 +29,14 @@ public class JpqlTypeMain {
                     System.out.println("item = " + item);
                 }
 
+                em.clear();
+
+                // java의 다운 캐스팅 처럼
+                List<Item> resultList1 = em.createQuery("select i from Item i where treat(i as Book).author = '김승호'", Item.class).getResultList();
+                for (Item item : resultList1) {
+                    System.out.println("item2 = " + item);
+                }
+
                 tx.commit();
             } catch (Exception e) {
                 e.printStackTrace();
